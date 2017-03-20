@@ -46,8 +46,8 @@ class UserController(p.toolkit.BaseController):
                 if config['ckanext.ldap.ckan_fallback']:
                     exists = _ckan_user_exists(login)
                     if exists['exists'] and not exists['is_ldap']:
-                        return self._login_failed(error=_('Username conflict. Please contact the site administrator.'))
-                return self._login_failed(error=_('Bad username or password.'))
+                        return self._login_failed(error=_('Conflito de usuário. Entre em contato com o administrador.'))
+                return self._login_failed(error=_('Nome de usuário ou senha incorretos.'))
             elif config['ckanext.ldap.ckan_fallback']:
                 # No LDAP user match, see if we have a CKAN user match
                 try:
@@ -59,10 +59,10 @@ class UserController(p.toolkit.BaseController):
                 if user and user.validate_password(password):
                     return self._login_success(user.name)
                 else:
-                    return self._login_failed(error=_('Bad username or password.'))
+                    return self._login_failed(error=_('Nome de usuário ou senha incorretos.'))
             else:
-                return self._login_failed(error=_('Bad username or password.'))
-        return self._login_failed(error=_('Please enter a username and password'))
+                return self._login_failed(error=_('Nome de usuário ou senha incorretos.'))
+        return self._login_failed(error=_('Digite seu usuário e senha'))
 
     def _login_failed(self, notice=None, error=None):
         """Handle login failures
@@ -140,7 +140,7 @@ def _get_or_create_ldap_user(ldap_user_dict):
     # Check whether we have a name conflict (based on the ldap name, without mapping it to allowed chars)
     exists = _ckan_user_exists(ldap_user_dict['username'])
     if exists['exists'] and not exists['is_ldap']:
-        raise UserConflictError(_('There is a username conflict. Please inform the site administrator.'))
+        raise UserConflictError(_('Conflito de usuário. Entre em contato com o administrador.'))
     # If a user with the same ckan name already exists but is an LDAP user, this means (given that we didn't
     # find it above) that the conflict arises from having mangled another user's LDAP name. There will not
     # however be a conflict based on what is entered in the user prompt - so we can go ahead. The current
